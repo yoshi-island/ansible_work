@@ -1,0 +1,22 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box = "bento/centos-7"
+  config.vm.define :server do |server|
+    server.vm.hostname = "server"
+    server.vm.network :private_network, ip: "192.168.111.223"
+  end
+
+  config.vm.define :client do |client|
+    client.vm.hostname = "client"
+    client.vm.network :private_network, ip: "192.168.111.224"
+    client.vm.provision "ansible" do |ansible|
+#      ansible.host_key_checking = false
+      ansible.playbook = "./provision_vagrant.yml"
+      ansible.inventory_path = "./hosts"
+      ansible.limit = 'all'
+    end
+  end
+
+end

@@ -1,0 +1,13 @@
+#samba
+- hosts: client
+  become: yes
+  user: root
+  tasks:
+    - name: install samba
+      yum:
+        name: samba-client
+        state: present
+
+#    - name: yum update
+#      yum:
+#        name: *

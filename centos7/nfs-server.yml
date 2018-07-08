@@ -1,0 +1,56 @@
+#nfs server
+- hosts: server
+  become: yes
+  user: root
+  tasks:
+    - name: install nfs
+      yum:
+        name: nfs-utils
+        state: present
+
+    - name: stop firewall
+      service:
+        name: firewalld
+        state: stopped
+
+    - name: make mount point
+      file:
+        path: "/mnt/nfs-server/"
+        state: directory
+
+    - name: make testfile
+      file:
+        path: "/mnt/nfs-server/testfile"
+        state: touch
+
+#    - name: confile
+#      lineinfile:
+#        dest: "/etc/idmapd.conf"
+#        insertafter: "Domain = local.domain.edu"
+#        line: "Domain = localdomain"
+#        backup: yes
+
+    - name: confile
+      lineinfile:
+        dest: "/etc/exports"
+        line: "/mnt/nfs-server *(rw)"
+        backup: yes
+
+    - name: change owner
+      file:
+        path: "/etc/exports"
+        owner: "root"
+        group: "root"
+
+    - name: start rpcbind
+      service:
+        name: rpcbind
+        state: started
+
+    - name: start nfs
+      service:
+        name: nfs
+        state: started
+
+    - name: export
+      shell: "exportfs -a"

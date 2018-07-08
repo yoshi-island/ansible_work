@@ -1,0 +1,38 @@
+#samba
+- hosts: server
+  become: yes
+  user: root
+  tasks:
+    - name: install samba
+      yum:
+        name: samba
+        state: present
+
+    - name: add user for samba
+      user:
+        name: samba
+        password: "password"
+
+    - name: create dir
+      file:
+        path: "/home/share/"
+        mode: 0777
+        state: directory
+
+    - name: create common dir
+      file:
+        path: "/home/samba"
+        state: directory
+        owner: samba
+        group: samba
+
+    - name: confile
+      template:
+        src: "./smb.conf"
+        dest: "/etc/samba/smb.conf"
+        backup: yes
+
+    - name: restart smb
+      service:
+        name: smb
+        state: started

@@ -1,0 +1,6 @@
+- hosts:
+  - all
+  tasks:
+    - name: export_date_file
+      export_date_file:
+        path: 

@@ -1,0 +1,42 @@
+#ftp server
+- hosts: server
+  become: yes
+  user: root
+  tasks:
+    - name: install vsftp
+      yum:
+        name: vsftpd
+        state: present
+
+    - name: stop firewall
+      service:
+        name: firewalld
+        state: stopped
+
+    - name: confile
+      lineinfile:
+        dest: "/etc/vsftpd/vsftpd.conf"
+        regexp: "anonymous_enable="
+        line: "anonymous_enable=YES"
+        backup: yes
+
+    - name: confile
+      lineinfile:
+        dest: "/etc/vsftpd/vsftpd.conf"
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        backup: yes
+      with_items:
+        - { regexp: "ascii_upload_enable=", line: "ascii_upload_enable=YES" }
+        - { regexp: "ascii_download_enable=", line: "ascii_download_enable=YES" }
+
+    - name: confile
+      lineinfile:
+        dest: "/etc/vsftpd/vsftpd.conf"
+        line: "use_localtime=YES"
+        backup: yes
+
+    - name: start vsftp
+      service:
+        name: vsftpd
+        state: started

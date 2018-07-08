@@ -1,0 +1,24 @@
+- hosts: all
+  become: yes
+  user: root
+  gather_facts: false
+  tasks:
+    - file:
+        path: ~/ansible-vagrant-test
+        state: touch
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: change system locale
+      lineinfile:
+        dest: /etc/locale.conf
+        regexp: 'LANG=*'
+        line: 'LANG=en_US.utf8'
+        backup: yes
+
+    - name: ssh command
+      debug:
+        msg: "sudo ssh vagrant@{{ inventory_hostname }}"
+      delegate_to: 127.0.0.1
+

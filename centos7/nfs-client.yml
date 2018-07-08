@@ -1,0 +1,43 @@
+#nfs client
+- hosts: client
+  become: yes
+  user: root
+  tasks:
+    - name: install nfs
+      yum:
+        name: nfs-utils
+        state: present
+
+#    - name: confile
+#      lineinfile:
+#        dest: "/etc/idmapd.conf"
+#        insertafter: "Domain = local.domain.edu"
+#        line: "Domain = localdomain"
+#        backup: yes
+
+    - name: start rpcbind
+      service:
+        name: rpcbind
+        state: started
+
+    - name: stop firewall
+      service:
+        name: firewalld
+        state: stopped
+
+#    - name: start netfs
+#      service:
+#        name: netfs
+#        state: started
+
+    - name: make mount point
+      file:
+        path: "/mnt/nfs-client/"
+        state: directory
+
+    - name: mount
+      mount:
+        name: "/mnt/nfs-client"
+        src: "192.168.111.223:/mnt/nfs-server"
+        fstype: nfs
+        state: present

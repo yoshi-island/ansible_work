@@ -1,0 +1,19 @@
+#ftp client
+- hosts: client
+  become: yes
+  user: root
+  tasks:
+    - name: install ftp
+      yum:
+        name: ftp
+        state: present
+
+    - name: stop firewall
+      service:
+        name: firewalld
+        state: stopped
+
+#    - name: start ftp
+#      service:
+#        name: ftp
+#        state: started
